@@ -50,6 +50,24 @@ app.get('/user/:id', function(req, res) {
     );
 }); //แสดงรายชื่อทั้งหมด
 
+app.post('/user/create', function(req,res,next){
+    const fname = req.body.fname;
+    const lname = req.body.lname;
+    const username = req.body.username;
+    const password = req.body.password;
+    const avatar = req.body.avatar;
+    Connection.query(
+        'INSERT INTO user(fname, lname, username, password, avatar) VALUES (?, ?, ?, ?, ?)',
+        [fname, lname, username, password, avatar],
+        function(err, results, fields){
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+            res.status(200).json(results);
+        }
+    );
+}); //สร้างรายชื่อใหม่
+
 app.put('/user/update', function(req,res,next){
     const fname = req.body.fname;
     const lname = req.body.lname;
@@ -66,16 +84,18 @@ app.put('/user/update', function(req,res,next){
         }
     );
 }
-); //สร้างรายชื่อใหม่
+); //อัพเดทรายชื่อ
 
 app.delete('/user/delete', function(req,res,next){
     const id = req.body.id;
     Connection.query(
         'DELETE FROM user WHERE id= ?',
         [id],
-        function(err,results,fields){
+        function(err, results, fields){
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
             res.status(200).json(results);
         }
     );
-}
-); //ลบรายชื่อ
+}); //ลบรายชื่อ
